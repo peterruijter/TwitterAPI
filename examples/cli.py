@@ -1,31 +1,31 @@
 """
-	A Command-Line Interface to Twitter's REST API and Streaming API.
-	-----------------------------------------------------------------
-	
-	Run this command line script with any Twitter endpoint.  The json-formatted
-	response is printed to the console.  The script works with both Streaming API and
-	REST API endpoints.
+    A Command-Line Interface to Twitter's REST API and Streaming API.
+    -----------------------------------------------------------------
+    
+    Run this command line script with any Twitter endpoint.  The json-formatted
+    response is printed to the console.  The script works with both Streaming API and
+    REST API endpoints.
 
-	IMPORTANT: Before using this script, you must enter your Twitter application's OAuth
-	credentials in TwitterAPI/credentials.txt.  Log into http://dev.twitter.com to create
-	your application.
-	
-	Examples:
+    IMPORTANT: Before using this script, you must enter your Twitter application's OAuth
+    credentials in TwitterAPI/credentials.txt.  Log into http://dev.twitter.com to create
+    your application.
+    
+    Examples:
 
-	::
-	
-		python cli -endpoint search/tweets -parameters q=zzz
-		python cli -endpoint statuses/filter -parameters track=zzz
-		
-	These examples print the raw json response.  You can also print one or more fields
-	from the response, for instance the tweet 'text' field, like this:
-	
-	::
-	
-		python cli -endpoint statuses/filter -parameters track=zzz -fields text
-		
-	Documentation for all Twitter endpoints is located at:
-		 https://dev.twitter.com/docs/api/1.1
+    ::
+    
+        python cli -endpoint search/tweets -parameters q=zzz
+        python cli -endpoint statuses/filter -parameters track=zzz
+        
+    These examples print the raw json response.  You can also print one or more fields
+    from the response, for instance the tweet 'text' field, like this:
+    
+    ::
+    
+        python cli -endpoint statuses/filter -parameters track=zzz -fields text
+        
+    Documentation for all Twitter endpoints is located at:
+         https://dev.twitter.com/docs/api/1.1
 """
 
 
@@ -103,6 +103,11 @@ if __name__ == '__main__':
         help='print a top-level field in the json response',
         nargs='+')
     parser.add_argument(
+        '--headers',
+        action="store_true",
+        help='print response headers of TwitterAPI',
+        ), 
+    parser.add_argument(
         '-indent',
         metavar='SPACES',
         type=int,
@@ -119,6 +124,11 @@ if __name__ == '__main__':
                          oauth.access_token_key,
                          oauth.access_token_secret)
         response = api.request(args.endpoint, params)
+        
+        if args.headers:
+            for name, value in response.headers.iteritems():
+                print('%s: %s' % (name, value))
+
 
         for item in response.get_iterator():
             if not args.fields:
